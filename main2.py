@@ -1,20 +1,20 @@
 import time
-from torchvision import datasets
-from torchsummary import summary
-from copy import deepcopy
+#from torchvision import datasets
+#from torchsummary import summary
+#from copy import deepcopy
 from customfloatnetwork import *
 import easydict
 import numpy as np
-from matplotlib.ticker import LinearLocator
-from matplotlib import cm
-import matplotlib.pyplot as plt
-from torch.autograd import Variable
-import torchvision.transforms as transforms
-import torchvision.datasets as dsets
+#from matplotlib.ticker import LinearLocator
+#from matplotlib import cm
+#import matplotlib.pyplot as plt
+#from torch.autograd import Variable
+#import torchvision.transforms as transforms
+#import torchvision.datasets as dsets
 import torch.nn as nn
-from dataclasses import dataclass
+#from dataclasses import dataclass
 import torch
-from torchvision.io import read_image
+#from torchvision.io import read_image
 # torch.set_default_dtype(torch.float32)
 # torch.set_default_tensor_type(torch.FloatTensor)
 # from lib import *
@@ -163,16 +163,26 @@ class MyConvNet(nn.Module):
 # model.lin2.register_forward_hook(clamp_weights_hook)
 import time
 timestr = time.strftime("%Y%m%d-%H%M%S")
-f = open("MyConvTest"+timestr+".txt", "w")
+f = open("MyConvTest"+timestr+".txt", "a")
 f.write("Starting Test\n")
 epochs = 5
 learn_rt = .003
+startt =time.time()
+
 # 
 for i in range(1,9):
+
     for j in range(1,24):
+
         model = MyConvNet(args)
+
         floatinfo = CustomFloat(True,i,j)
-        optimizer = torch.optim.SGD(model.parameters(), lr = learn_rt)
+
+        try:
+            learn_rt = .003
+            optimizer = torch.optim.Adam(model.parameters(), lr = learn_rt)
+        except:
+            print("An exception occurred") 
         print(i,",",j,"- Training")
         model = train_model_float(model,optimizer,train_loader,len(train_set),floatinfo,epochs,True,batch_size)
         model.eval()
@@ -180,10 +190,13 @@ for i in range(1,9):
         accuracy = test_model_float(model,test_loader,floatinfo)
         print(i,",",j,"- Accuracy: ",accuracy)
         f.write('{0},{1} - {2}\n'.format(i,j,accuracy))
-        f.flush()
+        print("done")
+       # f.flush()
 
 f.close()
-
+endt =time.time()
+elapsed_time = endt - startt
+print('Execution time:', elapsed_time, 'seconds')
         
 # model = MyConvNet(args)
 # model1 = MyConvNet(args)
