@@ -161,13 +161,15 @@ class MyConvNet(nn.Module):
 # model.conv2.register_forward_hook(clamp_weights_hook)
 # #model.bn2.register_forward_hook(clamp_weights_hook)
 # model.lin2.register_forward_hook(clamp_weights_hook)
-f = open("demofile2.txt", "a")
+import time
+timestr = time.strftime("%Y%m%d-%H%M%S")
+f = open("MyConvTest"+timestr+".txt", "w")
 f.write("Starting Test\n")
-epochs = 8
+epochs = 5
 learn_rt = .003
 # 
-for i in(1,9):
-    for j in (1,24):
+for i in range(1,9):
+    for j in range(1,24):
         model = MyConvNet(args)
         floatinfo = CustomFloat(True,i,j)
         optimizer = torch.optim.SGD(model.parameters(), lr = learn_rt)
@@ -177,9 +179,10 @@ for i in(1,9):
         print(i,",",j,"- Testing")
         accuracy = test_model_float(model,test_loader,floatinfo)
         print(i,",",j,"- Accuracy: ",accuracy)
-        f.write(i,",",j,"-",accuracy,"\n")
+        f.write('{0},{1} - {2}\n'.format(i,j,accuracy))
+        f.flush()
 
-
+f.close()
 
         
 # model = MyConvNet(args)
