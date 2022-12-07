@@ -18,8 +18,7 @@ from clampfloat import *
 device = 'cpu'
 if torch.cuda.is_available() and args.cuda:
     device = 'cuda'
-elif torch.backends.mps.is_available() and args.mps:
-    device = 'mps'
+
 
 
 allowInputClamp = True
