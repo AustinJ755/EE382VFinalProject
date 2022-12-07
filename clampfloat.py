@@ -86,7 +86,7 @@ void clamp_float(unsigned long long ptr, unsigned n, unsigned s_bits, unsigned e
         values[i] = *res_f_ptr;
     }
 }
-""", extra_compile_args=["-Ofast"])
+""", extra_compile_args=["-mavx"])
 # ffi.set_source("_clampfloat", """
 # void clamp_float(unsigned long long ptr, unsigned n, unsigned s_bits, unsigned e_bits, unsigned m_bits) {
 #     //printf("test1\\n");
