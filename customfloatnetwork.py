@@ -52,6 +52,10 @@ def test_model_float(model,test_loader, floatFormat = CustomFloat(), en_print=Tr
     enableCustomFloats = not (floatFormat.signed and floatFormat.exponent == 8 and floatFormat.mantisa == 23)
 
 
+    if enableCustomFloats:
+        with torch.no_grad():
+            fixLayers(model,floatFormat,True)
+
     for images, labels in test_loader:
 
         #clamp the floats if we are using a custom float type
