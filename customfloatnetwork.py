@@ -141,9 +141,8 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
             print(loss.get_device())
             print(outputs.get_device())
             print(labels.get_device())
-            print(model.get_device())
-            print(criterion.get_device())
-            print(optimizer.get_device())
+            print(next(model.parameters()).device)
+
             loss.backward()
             optimizer.step()
             if tprint:
