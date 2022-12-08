@@ -167,10 +167,11 @@ def fixLayers(model, cfloat:CustomFloat, fixBias = True):
     if not allowLayerClamp:
         return
     on = 1 if cfloat.signed else 0
-    m1 = model
-    for name, param in m1.cpu().named_parameters(): 
+    model = model
+    for name, param in model.cpu().named_parameters(): 
         if param.requires_grad:
             if("bias" in name and fixBias):
+                print(param.data.get_device())
                 hData = param.data.detach().cpu().numpy()
                 vec_clamp_float(hData,on,cfloat.exponent,cfloat.mantisa)
                 param.data = nn.Parameter(torch.from_numpy(hData)).to(device=device)
