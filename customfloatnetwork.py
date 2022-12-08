@@ -159,8 +159,8 @@ def fixLayers(model: nn.Module, cfloat:CustomFloat, fixBias = True):
     if not allowLayerClamp:
         return
     on = 1 if cfloat.signed else 0
-    parms = model.cpu()
-    for name, param in parms.named_parameters(): 
+    #parms = model.cpu()
+    for name, param in model.named_parameters(): 
         if param.requires_grad:
             if("bias" in name and fixBias):
                 hData = param.data.detach().cpu().numpy()
