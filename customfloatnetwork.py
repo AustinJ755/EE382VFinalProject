@@ -168,7 +168,7 @@ def fixLayers(model, cfloat:CustomFloat, fixBias = True):
         return
     on = 1 if cfloat.signed else 0
     model = model
-    for name, param in model.cpu().named_parameters(): 
+    for name, param in model.named_parameters(): 
         if param.requires_grad:
             if("bias" in name and fixBias):
                 print(param.data.get_device())
