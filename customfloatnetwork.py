@@ -104,17 +104,19 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
         for i, (images, labels) in enumerate(train_loader):
             #clamp the floats if we are using a custom float type
             #images = Variable(images.view(-1, 28 * 28))
+            print(1, end = '')
             if allowInputClamp and enableCustomFloats:
                 hold = images.detach().numpy()
                 vec_clamp_float(hold , signBits, floatFormat.exponent, floatFormat.mantisa)
                 images = torch.from_numpy(hold)
-                
+            print(2, end = '')   
             images = images.to(device)
             labels = Variable(labels).to(device)
-
+            print(3, end = '')
             # Forward + Backward + Optimize
             optimizer.zero_grad()
             outputs = model(images)
+            print(4, end = '')
             loss = criterion(outputs, labels)
             
             # L1norm = model.parameters()
@@ -131,7 +133,7 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
 
             loss.backward()
             optimizer.step()
-
+            print(5, end = '')
             if enableCustomFloats:
                 #this might need to be blocked with grad update stuff
                 with torch.no_grad():
