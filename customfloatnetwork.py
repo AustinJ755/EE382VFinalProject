@@ -138,11 +138,6 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
             # if(args.L1norm==True):
             #     if len(arr)>0:
             #         loss = loss+L1loss/len(arr)
-            print(loss.get_device())
-            print(outputs.get_device())
-            print(labels.get_device())
-            print(next(model.parameters()).device)
-            print(loss)
             loss.backward()
             print(loss)
             optimizer.step()
@@ -170,12 +165,12 @@ def fixLayers(model, cfloat:CustomFloat, fixBias = True):
     for name, param in model.named_parameters(): 
         if param.requires_grad:
             if("bias" in name and fixBias):
-                print("bias:",param.data.get_device())
+                #print("bias:",param.data.get_device())
                 hData = param.data.detach().cpu().numpy()
                 vec_clamp_float(hData,on,cfloat.exponent,cfloat.mantisa)
                 param.data = nn.Parameter(torch.from_numpy(hData)).to(device=device)
             elif("weight" in name):
-                print("weight:",param.data.get_device())
+                #print("weight:",param.data.get_device())
                 hData = param.data.detach().cpu().numpy()
                 vec_clamp_float(hData,on,cfloat.exponent,cfloat.mantisa)
                 param.data = nn.Parameter(torch.from_numpy(hData)).to(device=device)
