@@ -170,11 +170,12 @@ def fixLayers(model, cfloat:CustomFloat, fixBias = True):
     for name, param in model.named_parameters(): 
         if param.requires_grad:
             if("bias" in name and fixBias):
-                print(param.data.get_device())
+                print("bias:",param.data.get_device())
                 hData = param.data.detach().cpu().numpy()
                 vec_clamp_float(hData,on,cfloat.exponent,cfloat.mantisa)
                 param.data = nn.Parameter(torch.from_numpy(hData)).to(device=device)
             elif("weight" in name):
+                print("weight:",param.data.get_device())
                 hData = param.data.detach().cpu().numpy()
                 vec_clamp_float(hData,on,cfloat.exponent,cfloat.mantisa)
                 param.data = nn.Parameter(torch.from_numpy(hData)).to(device=device)
