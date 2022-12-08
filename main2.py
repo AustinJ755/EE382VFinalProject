@@ -1,5 +1,5 @@
 import time
-#from torchvision import datasets
+from torchvision import datasets
 #from torchsummary import summary
 #from copy import deepcopy
 from customfloatnetwork import *
