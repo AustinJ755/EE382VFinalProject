@@ -170,9 +170,9 @@ learn_rt = .003
 startt =time.time()
 
 # 
-for i in range(1,9):
+for i in range(2,9,2):
 
-    for j in range(1,24):
+    for j in range(1,24,2):
 
         model = MyConvNet(args)
 
