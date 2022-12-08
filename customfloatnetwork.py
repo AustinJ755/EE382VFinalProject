@@ -160,7 +160,9 @@ def fixLayers(model: nn.Module, cfloat:CustomFloat, fixBias = True):
         return
     on = 1 if cfloat.signed else 0
     #parms = model.cpu()
-    for name, param in model.named_parameters(): 
+    print("prebegin") 
+    for name, param in model.named_parameters():
+        print("begin") 
         if param.requires_grad:
             if("bias" in name and fixBias):
                 hData = param.data.detach().cpu().numpy()
