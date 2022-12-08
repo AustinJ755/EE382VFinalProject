@@ -98,6 +98,7 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
     #clean up the default biases and weights and make sure they are in range
     if enableCustomFloats:
         with torch.no_grad():
+            print("go here")
             fixLayers(model,floatFormat,clamp_bias)
 
     if tprint:
