@@ -82,7 +82,7 @@ def test_model_float(model,test_loader, floatFormat = CustomFloat(), en_print=Tr
 # Prints: progress of training
 # Returns: trained model
 
-def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat = CustomFloat(), num_epochs=5, clamp_bias = False , batch_size = 64):
+def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat = CustomFloat(), num_epochs=5, clamp_bias = False , batch_size = 64,tprint=False):
     criterion = nn.CrossEntropyLoss()
     
     criterion=criterion.to(device)
@@ -93,30 +93,35 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
 
     #determine if we need to implement custom floats
     enableCustomFloats = not (floatFormat.signed and floatFormat.exponent == 8 and floatFormat.mantisa == 23)
-    print("start Train")
+    if tprint:
+        print("start Train")
     #clean up the default biases and weights and make sure they are in range
     if enableCustomFloats:
         with torch.no_grad():
             fixLayers(model,floatFormat,clamp_bias)
 
-    print("fix vallues")
+    if tprint:
+        print("fix vallues")
     for epoch in range(num_epochs):
         for i, (images, labels) in enumerate(train_loader):
             #clamp the floats if we are using a custom float type
             #images = Variable(images.view(-1, 28 * 28))
-            print(1)
+            #print(1)
             if allowInputClamp and enableCustomFloats:
                 hold = images.detach().numpy()
                 vec_clamp_float(hold , signBits, floatFormat.exponent, floatFormat.mantisa)
                 images = torch.from_numpy(hold)
-            print(2)   
+            if tprint:
+                print(2)   
             images = images.to(device)
             labels = Variable(labels).to(device)
-            print(3)
+            if tprint:
+                print(3)
             # Forward + Backward + Optimize
             optimizer.zero_grad()
             outputs = model(images)
-            print(4)
+            if tprint:
+                print(4)
             loss = criterion(outputs, labels)
             
             # L1norm = model.parameters()
@@ -133,14 +138,16 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
 
             loss.backward()
             optimizer.step()
-            print(5)
+            if tprint:
+                print(5)
             if enableCustomFloats:
                 #this might need to be blocked with grad update stuff
                 with torch.no_grad():
                     fixLayers(model,floatFormat,clamp_bias)
 
 
-            print("|")
+            if tprint:
+                print("|")
             if (i + 1) % batch_size == 0:
                 print('Epoch: [% d/% d], Step: [% d/% d], Loss: %.4f'
                         % (epoch + 1, num_epochs, i + 1,
