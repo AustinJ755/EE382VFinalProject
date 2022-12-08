@@ -155,12 +155,12 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
     return model
 
 
-def fixLayers(model: nn.Module, cfloat:CustomFloat, fixBias = True):
+def fixLayers(model, cfloat:CustomFloat, fixBias = True):
+    print("called") 
     if not allowLayerClamp:
         return
     on = 1 if cfloat.signed else 0
-    #parms = model.cpu()
-    print("prebegin") 
+    print("pregit begin") 
     for name, param in model.named_parameters():
         print("begin") 
         if param.requires_grad:
