@@ -139,7 +139,6 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
             #     if len(arr)>0:
             #         loss = loss+L1loss/len(arr)
             loss.backward()
-            print(loss)
             optimizer.step()
             if tprint:
                 print(5)
