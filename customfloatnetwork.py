@@ -16,7 +16,7 @@ from copy import deepcopy
 from clampfloat import *
 
 device = 'cpu'
-if torch.cuda.is_available() and args.cuda:
+if torch.cuda.is_available():
     device = 'cuda'
 
 
