@@ -138,9 +138,9 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
             # if(args.L1norm==True):
             #     if len(arr)>0:
             #         loss = loss+L1loss/len(arr)
-            print(loss.device())
-            print(outputs.device())
-            print(labels.device())
+            print(loss.get_device())
+            print(outputs.get_device())
+            print(labels.get_device())
             loss.backward()
             optimizer.step()
             if tprint:
@@ -174,4 +174,4 @@ def fixLayers(model, cfloat:CustomFloat, fixBias = True):
                 hData = param.data.detach().cpu().numpy()
                 vec_clamp_float(hData,on,cfloat.exponent,cfloat.mantisa)
                 param.data = nn.Parameter(torch.from_numpy(hData)).to(device=device)
-    model.cuda()
+    #model.cuda()
