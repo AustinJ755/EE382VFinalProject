@@ -155,11 +155,12 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
     return model
 
 
-def fixLayers(model: torch.nn.Module, cfloat:CustomFloat, fixBias = True):
+def fixLayers(model: nn.Module, cfloat:CustomFloat, fixBias = True):
     if not allowLayerClamp:
         return
     on = 1 if cfloat.signed else 0
-    parms = model.to(device=torch.device('cpu'))
+    print(model)
+    parms = model.cpu()
     print(parms)
     
     #.named_parameters()
