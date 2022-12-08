@@ -96,13 +96,13 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
     if tprint:
         print("start Train")
     #clean up the default biases and weights and make sure they are in range
-    print("what1",flush=True)
+
     if enableCustomFloats:
-        print("what2",flush=True)
+
         with torch.no_grad():
-            print("go here")
+
             fixLayers(model,floatFormat,clamp_bias)
-    print("what",flush=True)
+
     if tprint:
         print("fix vallues")
     for epoch in range(num_epochs):
@@ -138,7 +138,9 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
             # if(args.L1norm==True):
             #     if len(arr)>0:
             #         loss = loss+L1loss/len(arr)
-
+            print(loss.device())
+            print(outputs.device())
+            print(labels.device())
             loss.backward()
             optimizer.step()
             if tprint:
@@ -159,13 +161,10 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
 
 
 def fixLayers(model, cfloat:CustomFloat, fixBias = True):
-    print("called") 
     if not allowLayerClamp:
         return
     on = 1 if cfloat.signed else 0
-    print("pregit begin") 
-    for name, param in model.cpu().named_parameters():
-        print("begin") 
+    for name, param in model.cpu().named_parameters(): 
         if param.requires_grad:
             if("bias" in name and fixBias):
                 hData = param.data.detach().cpu().numpy()
