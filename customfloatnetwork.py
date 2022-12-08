@@ -108,7 +108,7 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
     for epoch in range(num_epochs):
         for i, (images, labels) in enumerate(train_loader):
             #clamp the floats if we are using a custom float type
-            #images = Variable(images.view(-1, 28 * 28))
+            #images = Variable(images.view(-1, 28 * 28))git git 
             #print(1)
             if allowInputClamp and enableCustomFloats:
                 hold = images.detach().cpu().numpy()
@@ -164,7 +164,7 @@ def fixLayers(model, cfloat:CustomFloat, fixBias = True):
         return
     on = 1 if cfloat.signed else 0
     print("pregit begin") 
-    for name, param in model.named_parameters():
+    for name, param in model.cpu().named_parameters():
         print("begin") 
         if param.requires_grad:
             if("bias" in name and fixBias):
