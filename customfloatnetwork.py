@@ -159,7 +159,8 @@ def fixLayers(model: torch.nn.Module, cfloat:CustomFloat, fixBias = True):
     if not allowLayerClamp:
         return
     on = 1 if cfloat.signed else 0
-    for name, param in model.cpu().named_parameters(): 
+    parms = model.named_parameters().cpu()
+    for name, param in parms: 
         if param.requires_grad:
             if("bias" in name and fixBias):
                 hData = param.data.detach().cpu().numpy()
