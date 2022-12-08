@@ -100,7 +100,7 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
         with torch.no_grad():
             print("go here")
             fixLayers(model,floatFormat,clamp_bias)
-
+    print("what",flush=True)
     if tprint:
         print("fix vallues")
     for epoch in range(num_epochs):
