@@ -159,7 +159,6 @@ def fixLayers(model: nn.Module, cfloat:CustomFloat, fixBias = True):
     if not allowLayerClamp:
         return
     on = 1 if cfloat.signed else 0
-    print(model)
     parms = model.cpu()
     print(parms)
     
