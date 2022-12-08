@@ -175,3 +175,4 @@ def fixLayers(model, cfloat:CustomFloat, fixBias = True):
                 hData = param.data.detach().cpu().numpy()
                 vec_clamp_float(hData,on,cfloat.exponent,cfloat.mantisa)
                 param.data = nn.Parameter(torch.from_numpy(hData)).to(device=device)
+    model.cuda()
