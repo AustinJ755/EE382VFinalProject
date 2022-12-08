@@ -139,7 +139,7 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
 
 
 
-            if (i + 1) % 600 == 0:
+            if (i + 1) % batch_size == 0:
                 print('Epoch: [% d/% d], Step: [% d/% d], Loss: %.4f'
                         % (epoch + 1, num_epochs, i + 1,
                         data_set_len // batch_size, loss.data.item()))
