@@ -59,9 +59,9 @@ def test_model_float(model,test_loader, floatFormat = CustomFloat(), en_print=Tr
 
         #clamp the floats if we are using a custom float type
         if allowInputClamp and enableCustomFloats:
-            hold = images.detach().numpy()
+            hold = images.detach().cpu().numpy()
             vec_clamp_float(hold , signBits, floatFormat.exponent, floatFormat.mantisa)
-            images = torch.from_numpy(hold)
+            images = torch.from_numpy(hold).to(device=device)
         
         
         images = images.to(device)
@@ -108,9 +108,9 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
             #images = Variable(images.view(-1, 28 * 28))
             #print(1)
             if allowInputClamp and enableCustomFloats:
-                hold = images.detach().numpy()
+                hold = images.detach().cpu().numpy()
                 vec_clamp_float(hold , signBits, floatFormat.exponent, floatFormat.mantisa)
-                images = torch.from_numpy(hold)
+                images = torch.from_numpy(hold).to(device=device)
             if tprint:
                 print(2)   
             images = images.to(device)
@@ -162,10 +162,10 @@ def fixLayers(model: torch.nn.Module, cfloat:CustomFloat, fixBias = True):
     for name, param in model.named_parameters(): 
         if param.requires_grad:
             if("bias" in name and fixBias):
-                hData = param.data.detach().numpy()
+                hData = param.data.detach().cpu().numpy()
                 vec_clamp_float(hData,on,cfloat.exponent,cfloat.mantisa)
-                param.data = nn.Parameter(torch.from_numpy(hData))
+                param.data = nn.Parameter(torch.from_numpy(hData)).to(device=device)
             elif("weight" in name):
-                hData = param.data.detach().numpy()
+                hData = param.data.detach().cpu().numpy()
                 vec_clamp_float(hData,on,cfloat.exponent,cfloat.mantisa)
-                param.data = nn.Parameter(torch.from_numpy(hData))
+                param.data = nn.Parameter(torch.from_numpy(hData)).to(device=device)
