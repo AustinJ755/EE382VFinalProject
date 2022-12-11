@@ -15,9 +15,9 @@ from copy import deepcopy
 # Importing here so we can use in the model if needed
 from clampfloat import *
 
-device = 'cpu'
-if torch.cuda.is_available():
-    device = 'cuda'
+# device = 'cpu'
+# if torch.cuda.is_available():
+#     device = 'cuda'
 
 
 
@@ -35,7 +35,7 @@ class CustomFloat:
 #takes in a floatFormat otherwise defaults to 32bit float. You can not use more than 8 bits of exponent or 23 bits of mantisa or 1 bit of sign
 # Prints: accuracy of test set
 # Returns: accuracy of test set
-def test_model_float(model,test_loader, floatFormat = CustomFloat(), en_print=True):
+def test_model_float(device,model,test_loader, floatFormat = CustomFloat(), en_print=True):
     criterion = nn.CrossEntropyLoss()
     
     criterion=criterion.to(device)
@@ -53,7 +53,7 @@ def test_model_float(model,test_loader, floatFormat = CustomFloat(), en_print=Tr
 
     if enableCustomFloats:
         with torch.no_grad():
-            fixLayers(model,floatFormat,True)
+            fixLayers(device,model,floatFormat,True)
 
     for images, labels in test_loader:
 
@@ -82,7 +82,7 @@ def test_model_float(model,test_loader, floatFormat = CustomFloat(), en_print=Tr
 # Prints: progress of training
 # Returns: trained model
 
-def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat = CustomFloat(), num_epochs=5, clamp_bias = False , batch_size = 64,tprint=False):
+def train_model_float(device,model, optimizer, train_loader, data_set_len, floatFormat = CustomFloat(), num_epochs=5, clamp_bias = False , batch_size = 64,tprint=False):
     criterion = nn.CrossEntropyLoss()
     
     criterion=criterion.to(device)
@@ -101,7 +101,7 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
 
         with torch.no_grad():
 
-            fixLayers(model,floatFormat,clamp_bias)
+            fixLayers(device,model,floatFormat,clamp_bias)
 
     if tprint:
         print("fix vallues")
@@ -145,7 +145,7 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
             if enableCustomFloats:
                 #this might need to be blocked with grad update stuff
                 with torch.no_grad():
-                    fixLayers(model,floatFormat,clamp_bias)
+                    fixLayers(device,model,floatFormat,clamp_bias)
 
 
             if tprint:
@@ -157,7 +157,7 @@ def train_model_float(model, optimizer, train_loader, data_set_len, floatFormat 
     return model
 
 
-def fixLayers(model, cfloat:CustomFloat, fixBias = True):
+def fixLayers(device,model, cfloat:CustomFloat, fixBias = True):
     if not allowLayerClamp:
         return
     on = 1 if cfloat.signed else 0
