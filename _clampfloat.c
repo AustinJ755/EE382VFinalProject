@@ -569,55 +569,58 @@ static void (*_cffi_call_python_org)(struct _cffi_externpy_s *, char *);
 
 #include <immintrin.h>
 void clamp_float(unsigned long long ptr, unsigned n, unsigned s_bits, unsigned e_bits, unsigned m_bits) {
-    //printf("test1\n");
-    float * values = (float *) ptr;
+        //printf("test1\n");
+   float * values = (float *) ptr;
     unsigned man_size_diff = 23 - m_bits;
     int max_exp = (1 << (e_bits-1))-1;
     
-
-    int maskvalue = (0x7FFFFF>>man_size_diff)<<man_size_diff;
+    unsigned int maskvalue = (0x807FFFFF>>man_size_diff)<<man_size_diff;
     //value to mask mantissa
     __m256i mantMask=_mm256_set1_epi32(maskvalue);
+
     //bias
+    __m256i expMask = _mm256_set1_epi32(0xFF);
     __m256i val127=_mm256_set1_epi32(127);
-    //max allowed exponent
+
+
     __m256i maxEXP = _mm256_set1_epi32(max_exp);
     //minallowed exponent
     __m256i minEXP = _mm256_set1_epi32(-max_exp);
-    int i=0;
-    for(;i<n-8;i+=8){
+    unsigned int i=0;
+    for(i=0;i<n-8;i+=8){
             //load the data into simd registers
             __m256i input = _mm256_load_si256((__m256i*)&values[i]);
             //Truncate the mantissa value 
             __m256i mantissa =_mm256_and_si256(input,mantMask);
         
             //Remove sign bit
-            __m256i exponent = _mm256_slli_epi32(input,1);
+            __m256i exponent = _mm256_srli_epi32(input,23);
             //remove mantissa and shift exponent to bottom
-            exponent = _mm256_srli_epi32(exponent,24);
-
-            //subtract bias
+            exponent = _mm256_and_si256(expMask,exponent);
+            
+            // //subtract bias
             exponent = _mm256_sub_epi32(exponent,val127);
 
-            //clamp the exponent
+            // //clamp the exponent
             exponent = _mm256_min_epi32(exponent,maxEXP);
             exponent = _mm256_max_epi32(exponent,minEXP);
 
-            //add bias back
+            // //add bias back
             exponent = _mm256_add_epi32(exponent,val127);
 
-            //move exponent back to starting position
+            // //move exponent back to starting position
             exponent = _mm256_slli_epi32(exponent,23);
 
-            //assume sign bit will always be used 
-            input =  _mm256_srli_epi32(input,31);
-            input = _mm256_slli_epi32(input,31);
+            // // //assume sign bit will always be used 
+            // input =  _mm256_srli_epi32(input,31);
+            // input = _mm256_slli_epi32(input,31);
 
-            input = _mm256_or_si256(input,exponent);
-            input = _mm256_or_si256(input,mantissa);
+            input = _mm256_or_si256(mantissa,exponent);
+            //input = _mm256_or_si256(input,mantissa);
             
-            _mm256_store_si256((__m256i*)&values[i],input);
+            _mm256_store_si256((__m256i*)&(values[i]),input);
     }
+
     for(; i < n; i++) {
         unsigned * value_i_ptr = (unsigned *) &(values[i]);
         unsigned value_i = *value_i_ptr;
@@ -629,12 +632,12 @@ void clamp_float(unsigned long long ptr, unsigned n, unsigned s_bits, unsigned e
         res_i |= man;
 
         // Compute the effective exponent, then clamp to the representable range
-        int eff_exp = (value_i >> 23 & 0xFF) - 127;
+        int eff_exp = ((value_i >> 23) & 0xFF) - 127;
         //int res_exp = std::min(max_exp,eff_exp);
-        int res_exp = (max_exp > eff_exp) ? eff_exp : max_exp;
-        res_exp = (-max_exp > eff_exp) ? -max_exp : eff_exp;
+        eff_exp = (max_exp > eff_exp) ? eff_exp : max_exp;
+        int res_exp = ((-max_exp) > eff_exp) ? (-max_exp) : eff_exp;
         res_exp += 127; // Add back bias
-        res_i |= res_exp << 23;
+        res_i |= (res_exp << 23);
 
         // Handle the sign
         unsigned sign = value_i & 0x80000000;
