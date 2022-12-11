@@ -24,7 +24,7 @@ void clamp_float(unsigned long long ptr, unsigned n, unsigned s_bits, unsigned e
     //minallowed exponent
     __m256i minEXP = _mm256_set1_epi32(-max_exp);
     unsigned int i=0;
-    for(i=0;i<n;i+=8){
+    for(i=0;i<=n-8;i+=8){
             //load the data into simd registers
             __m256i input = _mm256_load_si256((__m256i*)&values[i]);
             //Truncate the mantissa value 
