@@ -23,7 +23,6 @@ from clampfloat import *
 
 allowInputClamp = True
 allowLayerClamp = True
-print('Using device: ' + str(device))
 
 @dataclass
 class CustomFloat:
