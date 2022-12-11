@@ -569,8 +569,7 @@ static void (*_cffi_call_python_org)(struct _cffi_externpy_s *, char *);
 
 #include <immintrin.h>
 void clamp_float(unsigned long long ptr, unsigned n, unsigned s_bits, unsigned e_bits, unsigned m_bits) {
-        //printf("test1\n");
-   float * values = (float *) ptr;
+    float * values = (float *) ptr;
     unsigned man_size_diff = 23 - m_bits;
     int max_exp = (1 << (e_bits-1))-1;
     
@@ -587,7 +586,7 @@ void clamp_float(unsigned long long ptr, unsigned n, unsigned s_bits, unsigned e
     //minallowed exponent
     __m256i minEXP = _mm256_set1_epi32(-max_exp);
     unsigned int i=0;
-    for(i=0;i<n-8;i+=8){
+    for(i=0;i<=n-8;i+=8){
             //load the data into simd registers
             __m256i input = _mm256_load_si256((__m256i*)&values[i]);
             //Truncate the mantissa value 
@@ -620,7 +619,6 @@ void clamp_float(unsigned long long ptr, unsigned n, unsigned s_bits, unsigned e
             
             _mm256_store_si256((__m256i*)&(values[i]),input);
     }
-
     for(; i < n; i++) {
         unsigned * value_i_ptr = (unsigned *) &(values[i]);
         unsigned value_i = *value_i_ptr;

@@ -90,41 +90,41 @@ void clamp_float(unsigned long long ptr, unsigned n, unsigned s_bits, unsigned e
 """, extra_compile_args=["-Ofast","-mavx2"])
 # ffi.set_source("_clampfloat", """
 # void clamp_float(unsigned long long ptr, unsigned n, unsigned s_bits, unsigned e_bits, unsigned m_bits) {
-#     //printf("test1\\n");
-#     float * values = (float *) ptr;
-#     unsigned man_size_diff = 23 - m_bits;
-#     int max_exp = (1 << (e_bits-1))-1;
-#         int maskvalue = (0x7FFFFF>>man_size_diff)<<man_size_diff;
-#     for(unsigned i = 0; i < n; i++) {
-#         unsigned * value_i_ptr = (unsigned *) &(values[i]);
-#         unsigned value_i = *value_i_ptr;
-#         unsigned res_i = 0;
-#         float * res_f_ptr = (float *) &res_i;
+    # float * values = (float *) ptr;
+    # unsigned man_size_diff = 23 - m_bits;
+    # int max_exp = (1 << (e_bits-1))-1;
+    
+    # unsigned int maskvalue = (0x807FFFFF>>man_size_diff)<<man_size_diff;
+    # for(; i < n; i++) {
+    #     unsigned * value_i_ptr = (unsigned *) &(values[i]);
+    #     unsigned value_i = *value_i_ptr;
+    #     unsigned res_i = 0;
+    #     float * res_f_ptr = (float *) &res_i;
 
-#         // Truncate the mantissa
-#         unsigned man = value_i&maskvalue;
-#         res_i |= man;
+    #     // Truncate the mantissa
+    #     unsigned man = value_i&maskvalue;
+    #     res_i |= man;
 
-#         // Compute the effective exponent, then clamp to the representable range
-#         int eff_exp = (value_i >> 23 & 0xFF) - 127;
-        
-#         int res_exp = (max_exp > eff_exp) ? eff_exp : max_exp;
-#         res_exp = (-max_exp > eff_exp) ? -max_exp : eff_exp;
-#         res_exp += 127; // Add back bias
-#         res_i |= res_exp << 23;
+    #     // Compute the effective exponent, then clamp to the representable range
+    #     int eff_exp = ((value_i >> 23) & 0xFF) - 127;
+    #     //int res_exp = std::min(max_exp,eff_exp);
+    #     eff_exp = (max_exp > eff_exp) ? eff_exp : max_exp;
+    #     int res_exp = ((-max_exp) > eff_exp) ? (-max_exp) : eff_exp;
+    #     res_exp += 127; // Add back bias
+    #     res_i |= (res_exp << 23);
 
-#         // Handle the sign
-#         unsigned sign = value_i & 0x80000000;
-#         if(s_bits == 0 && sign != 0) {
-#             // If unsigned, clamp negatives to zero
-#             res_i = 0;
-#         } else {
-#             // Otherwise, push the sign bit back in
-#             res_i |= sign;
-#         }
-#         values[i] = *res_f_ptr;
-#     }
-# }""", extra_compile_args=["--Ofast"])
+    #     // Handle the sign
+    #     unsigned sign = value_i & 0x80000000;
+    #     if(s_bits == 0 && sign != 0) {
+    #         // If unsigned, clamp negatives to zero
+    #         res_i = 0;
+    #     } else {
+    #         // Otherwise, push the sign bit back in
+    #         res_i |= sign;
+    #     }
+    #     values[i] = *res_f_ptr;
+    # }
+# }""", extra_compile_args=["-Ofast"])
 ffi.cdef("""void clamp_float(unsigned long long, unsigned, unsigned, unsigned, unsigned);""")
 ffi.compile()
 from _clampfloat import lib  # import the compiled library
